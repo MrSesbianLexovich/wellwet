@@ -2,22 +2,17 @@
 
 import Catalog from "@/components/catalog";
 import Footer from "@/components/footer";
+import Header from "@/components/header";
 
-import Hero from "@/components/hero";
-import QuestionForm from "@/components/questionForm";
-
-export default function Home() {
+export default function CatalogPage() {
   return (
     <div className="w-full flex flex-col items-center">
       <div className="flex flex-col container">
-        <Hero />
-
+        <Header />
         <Catalog />
-
-        <QuestionForm />
       </div>
-
       <Footer />
     </div>
   );
 }
+
