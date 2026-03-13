@@ -35,10 +35,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { products } from "@/server/lib/db/schema/schema";
+import CustomLoader from "@/components/loader";
 
 export default function Admin() {
-  const { data: me, isLoading: load } = useQuery({
+  const {
+    data: me,
+    isLoading: load,
+    isFetching: fetch,
+  } = useQuery({
     queryKey: ["me"],
     queryFn: async () => {
       const { data, error } = await api.users.me.get();
@@ -47,11 +51,17 @@ export default function Admin() {
     },
   });
 
-  if (!load && me?.user?.role !== "Admin") {
+  const lf = !load || !fetch;
+
+  if (!lf) {
+    return <CustomLoader />;
+  }
+
+  if (lf && me?.user?.role !== "Admin") {
     return <Custom404 />;
   }
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center font-[inter]">
       <div className="flex flex-col container">
         <div className="flex flex-row gap-8 mt-30">
           <Sidebar />
@@ -94,13 +104,21 @@ function Products() {
                   <td className="text-nowrap p-4 overflow-x-hidden">
                     {product.shortDescription}
                   </td>
-
+                  <td>
+                    <a
+                      href={`/products/${product.id}`}
+                      target="_blank"
+                      className="text-base text-accent"
+                    >
+                      Ссылка на товар
+                    </a>
+                  </td>
                   <td>
                     <DropdownMenu>
                       <DropdownMenuTrigger className="outline-0 ml-4">
                         <EllipsisVertical />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      <DropdownMenuContent className="font-[inter]">
                         <ProductAccordions product={product} />
                         <CreateUpdateProduct product={product} />
                         <DeleteProduct product={product} />
@@ -140,15 +158,16 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
   const form = useForm({
     defaultValues: product as z.infer<typeof formSchema>,
     validators: {
-      onSubmit: z.object({
-        name: z
-          .string({ message: "Введите название" })
-          .min(3, "Название должно быть длиннее 3-х символов"),
-        shortDescription: z.string({ message: "Введите краткое описание" }),
-        description: z.string(),
-        type: z.string(),
-        image: z.file({ message: "Загрузите изображение" }),
-      }),
+      onSubmit: productSchema,
+      // onSubmit: z.object({
+      //   name: z
+      //     .string({ message: "Введите название" })
+      //     .min(3, "Название должно быть длиннее 3-х символов"),
+      //   shortDescription: z.string({ message: "Введите краткое описание" }),
+      //   description: z.string(),
+      //   type: z.string(),
+      //   image: z.file({ message: "Загрузите изображение" }),
+      // }),
     },
     onSubmit: ({ value }) => {
       if (product) {
@@ -182,7 +201,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
 
   const updateProductMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      const { error } = await api.products({ id: product!.id }).put(data);
+      const { error } = await api.products({ id: product!.id }).patch(data);
       if (error) {
         throw new Error(String(error.status));
       }

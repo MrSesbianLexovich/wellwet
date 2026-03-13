@@ -2,7 +2,7 @@ import Elysia, { Context, status } from "elysia";
 import { auth } from "../lib/auth";
 import { questionsRouter } from "./consultationService";
 import { productsRouter } from "./productService";
-import { userRouter } from "./userService";
+import { adminRouter, userRouter } from "./userService";
 import { fileRouter } from "./fileService";
 import { accordionRouter } from "./accordionService";
 import { categoryRouter } from "./categoryService";
@@ -27,6 +27,7 @@ export const app = new Elysia({
   .use(userRouter)
   .use(fileRouter)
   .use(accordionRouter)
-  .use(categoryRouter);
+  .use(categoryRouter)
+  .use(adminRouter);
 
 export type App = typeof app;

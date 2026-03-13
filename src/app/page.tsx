@@ -4,6 +4,7 @@ import Catalog from "@/components/catalog";
 import Footer from "@/components/footer";
 
 import Hero from "@/components/hero";
+import Products from "@/components/products";
 import QuestionForm from "@/components/questionForm";
 
 export default function Home() {
@@ -12,7 +13,7 @@ export default function Home() {
       <div className="flex flex-col container">
         <Hero />
 
-        <Catalog />
+        <Products />
 
         <QuestionForm />
       </div>

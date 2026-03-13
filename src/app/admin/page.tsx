@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import CustomLoader from "@/components/loader";
 
 export default function Admin() {
   const { data: me, isLoading: load } = useQuery({
@@ -30,11 +31,17 @@ export default function Admin() {
     },
   });
 
-  if (!load && me?.user?.role !== "Admin") {
+  const lf = !load || !fetch;
+
+  if (!lf) {
+    return <CustomLoader />;
+  }
+
+  if (lf && me?.user?.role !== "Admin") {
     return <Custom404 />;
   }
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center font-[inter]">
       <div className="flex flex-col container">
         <div className="flex flex-row gap-8 mt-30">
           <Sidebar />

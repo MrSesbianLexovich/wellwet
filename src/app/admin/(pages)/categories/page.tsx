@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { categories, products } from "@/server/lib/db/schema/schema";
+import CustomLoader from "@/components/loader";
 
 export default function Admin() {
   const { data: me, isLoading: load } = useQuery({
@@ -51,11 +52,17 @@ export default function Admin() {
     },
   });
 
-  if (!load && me?.user?.role !== "Admin") {
+  const lf = !load || !fetch;
+
+  if (!lf) {
+    return <CustomLoader />;
+  }
+
+  if (lf && me?.user?.role !== "Admin") {
     return <Custom404 />;
   }
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center font-[inter]">
       <div className="flex flex-col container">
         <div className="flex flex-row gap-8 mt-30">
           <Sidebar />
@@ -100,7 +107,7 @@ function Categories() {
                       <DropdownMenuTrigger className="outline-0 ml-4">
                         <EllipsisVertical />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      <DropdownMenuContent className="font-[inter]">
                         <CreateUpdateCategory category={category} />
                         <DeleteCategory category={category} />
                       </DropdownMenuContent>
