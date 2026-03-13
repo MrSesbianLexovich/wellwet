@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, Loader } from "lucide-react";
+import { EllipsisVertical, Loader, LoaderCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +36,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import CustomLoader from "@/components/loader";
+import Image from "next/image";
+import { s3 } from "@/server/lib/s3";
+import { id } from "zod/v4/locales";
 
 export default function Admin() {
   const {
@@ -54,7 +57,11 @@ export default function Admin() {
   const lf = !load || !fetch;
 
   if (!lf) {
-    return <CustomLoader />;
+    return (
+      <div className="w-screen h-screen">
+        <CustomLoader />
+      </div>
+    );
   }
 
   if (lf && me?.user?.role !== "Admin") {
@@ -86,7 +93,6 @@ function Products() {
 
   return (
     <div className="w-full bg-gray-100 p-4 rounded-2xl justify-center items-center border">
-      {(isLoading || isFetching) && <Loader className="animate-spin" />}
       {data && (
         <div className="flex flex-col gap-2">
           <CreateUpdateProduct />
@@ -157,21 +163,36 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
   const formSchema = productSchema;
   const form = useForm({
     defaultValues: product as z.infer<typeof formSchema>,
+    // defaultValues: {
+    //   ...product,
+    //   name: product?.name,
+    //   image: ,
+    //   shortDescription: product?.shortDescription,
+    //   description: product?.description,
+    //   type: product?.type,
+    // } as z.infer<typeof formSchema>,
     validators: {
-      onSubmit: productSchema,
-      // onSubmit: z.object({
-      //   name: z
-      //     .string({ message: "Введите название" })
-      //     .min(3, "Название должно быть длиннее 3-х символов"),
-      //   shortDescription: z.string({ message: "Введите краткое описание" }),
-      //   description: z.string(),
-      //   type: z.string(),
-      //   image: z.file({ message: "Загрузите изображение" }),
-      // }),
+      // onSubmit: productSchema,
+      onSubmit: z.object({
+        name: z
+          .string({ message: "Введите название" })
+          .min(3, "Название должно быть длиннее 3-х символов"),
+        shortDescription: z.string({ message: "Введите краткое описание" }),
+        description: z.string(),
+        type: z.string(),
+        image: z.file({ message: "Загрузите изображение" }),
+      }),
     },
     onSubmit: ({ value }) => {
       if (product) {
-        updateProductMutation.mutate(value);
+        updateProductMutation.mutate({
+          ...value,
+          name: value.name,
+          shortDescription: value.shortDescription,
+          description: value.description,
+          type: value.type,
+          image: imageMeta,
+        });
       } else {
         createProductMutation.mutate(value);
       }
@@ -231,7 +252,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
           <Button className="bg-accent w-fit p-2">Создать товар</Button>
         )}
       </DialogTrigger>
-      <DialogContent className="min-w-200! flex flex-col">
+      <DialogContent className="min-w-200! flex flex-col font-[inter]">
         <DialogHeader>
           <DialogTitle>{product ? "Изменить" : "Создать"} товар</DialogTitle>
         </DialogHeader>
@@ -318,7 +339,16 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
                   </div>
                 )}
               </form.Field>
-
+              <Image
+                src={`/api/file/${product?.image}`}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                width={200}
+                height={200}
+              />
               <form.Field name="image">
                 {(field) => (
                   <div className="flex flex-col gap-1">
@@ -382,7 +412,15 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <Button disabled={isSubmitting}>
-                {isSubmitting ? "Please wait..." : "Submit"}
+                {isSubmitting ? (
+                  <div className="animate-spin">
+                    <LoaderCircle />
+                  </div>
+                ) : product ? (
+                  "Изменить"
+                ) : (
+                  "Создать"
+                )}
               </Button>
             )}
           </form.Subscribe>

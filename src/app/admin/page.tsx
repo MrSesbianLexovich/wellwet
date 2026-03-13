@@ -34,7 +34,11 @@ export default function Admin() {
   const lf = !load || !fetch;
 
   if (!lf) {
-    return <CustomLoader />;
+    return (
+      <div className="w-screen h-screen">
+        <CustomLoader />
+      </div>
+    );
   }
 
   if (lf && me?.user?.role !== "Admin") {

@@ -46,36 +46,36 @@ export const productsRouter = new Elysia({
   .patch(
     "/:id",
     async ({ params, body }) => {
-      if (body.image) {
-        const extention = body.image?.name.split(".").at(-1);
-        const fileId = `${Bun.randomUUIDv7()}.${extention}`;
+      // if (body.image) {
+      const extention = body.image?.name.split(".").at(-1);
+      const fileId = `${Bun.randomUUIDv7()}.${extention}`;
 
-        await s3.file(fileId).write(await body.image.arrayBuffer(), {
-          type: body.image?.type,
-        });
+      await s3.file(fileId).write(await body.image.arrayBuffer(), {
+        type: body.image?.type,
+      });
 
-        await db
-          .update(products)
-          .set({
-            ...body,
-            image: fileId,
-            name: body.name,
-            shortDescription: body.shortDescription,
-            description: body.description,
-            type: body.type,
-          })
-          .where(eq(products.id, params.id));
-      } else {
-        await db
-          .update(products)
-          .set({
-            name: body.name,
-            shortDescription: body.shortDescription,
-            description: body.description,
-            type: body.type,
-          })
-          .where(eq(products.id, params.id));
-      }
+      await db
+        .update(products)
+        .set({
+          ...body,
+          image: fileId,
+          name: body.name,
+          shortDescription: body.shortDescription,
+          description: body.description,
+          type: body.type,
+        })
+        .where(eq(products.id, params.id));
+      // } else {
+      //   await db
+      //     .update(products)
+      //     .set({
+      //       name: body.name,
+      //       shortDescription: body.shortDescription,
+      //       description: body.description,
+      //       type: body.type,
+      //     })
+      //     .where(eq(products.id, params.id));
+      // }
       await InvalidateCached(["products"]);
     },
     { body: productSchema.partial() },

@@ -4,7 +4,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Image from "next/image";
 import QuestionForm from "@/components/questionForm";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/app/utils/api";
 import Custom404 from "@/app/not-found";
@@ -14,10 +14,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import CustomLoader from "@/components/loader";
 
 export default function ProductPage() {
   const productId = useParams<{ id: string }>().id;
-  const rt = useRouter();
 
   const { data, error, isLoading, isFetching } = useQuery({
     queryKey: ["products", productId],
@@ -40,7 +40,11 @@ export default function ProductPage() {
 
   return (
     <>
-      {(isLoading || isFetching) && <p>Загрузка...</p>}
+      {(isLoading || isFetching) && (
+        <div className="w-screen h-screen">
+          <CustomLoader />
+        </div>
+      )}
       {data && (
         <div className="flex flex-col items-center">
           <div className="flex flex-col container">
