@@ -2,24 +2,30 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, clone the project:
+1. clone the project:
 
 ```bash
 git clone https://github.com/MrSesbianLexovich/wellwet.git
 ```
 
-Second, download the dependencies
+2. download the dependencies
 
 ```bash
 bun i
 ```
-Third, run the docker container:
+
+3. run the docker container:
 
 ```bash
 docker-compose up -d
 ```
 
-Fourth, run development server:
+4. create database called "wellwet"
+
+```postgres
+CREATE DATABASE wellwet;
+```
+5. run development server:
 
 ```bash
 bun dev
