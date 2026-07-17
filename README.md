@@ -2,14 +2,24 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the docker container:
+First, clone the project:
 
 ```bash
+git clone https://github.com/MrSesbianLexovich/wellwet.git
+```
 
+Second, download the dependencies
+
+```bash
+bun i
+```
+Third, run the docker container:
+
+```bash
 docker-compose up -d
 ```
 
-Second, run development server:
+Fourth, run development server:
 
 ```bash
 bun dev
