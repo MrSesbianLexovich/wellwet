@@ -20,7 +20,6 @@ const betterAuthView = (context: Context) => {
 export const app = new Elysia({
   prefix: "/api",
 })
-
   .all("/auth/*", betterAuthView)
   .use(questionsRouter)
   .use(productsRouter)
