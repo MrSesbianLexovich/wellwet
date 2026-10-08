@@ -6,6 +6,7 @@ import { adminRouter, userRouter } from "./userService";
 import { fileRouter } from "./fileService";
 import { accordionRouter } from "./accordionService";
 import { categoryRouter } from "./categoryService";
+import { swagger } from "@elysiajs/swagger";
 
 const betterAuthView = (context: Context) => {
   const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
@@ -27,6 +28,18 @@ export const app = new Elysia({
   .use(fileRouter)
   .use(accordionRouter)
   .use(categoryRouter)
-  .use(adminRouter);
+  .use(adminRouter)
+  .use(
+    swagger({
+      documentation: {
+        info: {
+          title: 'My API',
+          version: '1.0.0',
+          description: 'API для приложения на Next.js',
+        },
+      },
+    }),
+  )
+
 
 export type App = typeof app;

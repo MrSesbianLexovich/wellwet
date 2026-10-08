@@ -22,7 +22,7 @@ import {
 import { queryClient } from "@/app/utils/query-client";
 import { useState } from "react";
 import { accordionSchema, productSchema } from "@/server/lib/schemas";
-import { Field, useForm } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,8 +37,6 @@ import {
 } from "@/components/ui/select";
 import CustomLoader from "@/components/loader";
 import Image from "next/image";
-import { s3 } from "@/server/lib/s3";
-import { id } from "zod/v4/locales";
 
 export default function Admin() {
   const {
@@ -80,7 +78,7 @@ export default function Admin() {
 }
 
 function Products() {
-  const { data, error, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const { data, error } = await api.products.get();
@@ -148,7 +146,7 @@ type Product = NonNullable<
 function CreateUpdateProduct({ product }: { product?: Product }) {
   const [open, SetOpen] = useState(false);
 
-  const { data, error, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data, error } = await api.categories.get();
@@ -191,7 +189,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
           shortDescription: value.shortDescription,
           description: value.description,
           type: value.type,
-          image: imageMeta,
+          image: value.image,
         });
       } else {
         createProductMutation.mutate(value);
@@ -205,7 +203,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       const { error } = await api.products.post(data);
       if (error) {
-        throw new Error(String(error.status));
+        throw new Error(String(error));
       }
     },
     onSuccess: async () => {
@@ -339,7 +337,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
                   </div>
                 )}
               </form.Field>
-              <Image
+              {/* <Image
                 src={`/api/file/${product?.image}`}
                 alt=""
                 style={{
@@ -348,7 +346,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
                 }}
                 width={200}
                 height={200}
-              />
+              /> */}
               <form.Field name="image">
                 {(field) => (
                   <div className="flex flex-col gap-1">

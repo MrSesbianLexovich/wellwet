@@ -31,20 +31,7 @@ export default function QuestionForm({ question }: { question?: Question }) {
   const form = useForm({
     defaultValues: question as z.infer<typeof questionSchema>,
     validators: {
-      onSubmit: z.object({
-        name: z.string(),
-        phoneOrEmail:
-          z
-            .string()
-            .min(10, "Номер слишком короткий")
-            .max(15, "Номер слишком длинный")
-            .regex(
-              /^[+]?[0-9\s\-()]+$/,
-              "Номер содержит недопустимые символы",
-            ) || z.email,
-        type: z.string(),
-        question: z.string(),
-      }),
+      onSubmit: questionSchema,
     },
     onSubmit: ({ value }) => {
       createQuestionMutation.mutate(value);
@@ -55,6 +42,7 @@ export default function QuestionForm({ question }: { question?: Question }) {
     mutationKey: ["questions"],
 
     mutationFn: async (data: z.infer<typeof formSchema>) => {
+      console.log("DATA:", data)
       const { error } = await api.questions.post(data);
       if (error) {
         throw new Error(String(error.status));

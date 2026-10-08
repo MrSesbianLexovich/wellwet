@@ -26,19 +26,20 @@ export const productsRouter = new Elysia({
     async ({ body }) => {
       const extention = body.image.name.split(".").at(-1);
       const fileId = `${Bun.randomUUIDv7()}.${extention}`;
-
-      await s3.file(fileId).write(await body.image.arrayBuffer(), {
+      const test = await s3.file(fileId).write(await body.image.arrayBuffer(), {
         type: body.image.type,
       });
 
+      console.log("TEST:",test)
+      
       await db.insert(products).values({
-        ...body,
         image: fileId,
         name: body.name,
         shortDescription: body.shortDescription,
         description: body.description,
         type: body.type,
       });
+      
       await InvalidateCached(["products"]);
     },
     { body: productSchema },
@@ -46,14 +47,14 @@ export const productsRouter = new Elysia({
   .patch(
     "/:id",
     async ({ params, body }) => {
-      // if (body.image) {
+      if (body.image) {
       const extention = body.image?.name.split(".").at(-1);
       const fileId = `${Bun.randomUUIDv7()}.${extention}`;
 
       await s3.file(fileId).write(await body.image.arrayBuffer(), {
         type: body.image?.type,
       });
-
+    
       await db
         .update(products)
         .set({
@@ -76,7 +77,7 @@ export const productsRouter = new Elysia({
       //     })
       //     .where(eq(products.id, params.id));
       // }
-      await InvalidateCached(["products"]);
+      await InvalidateCached(["products"])};
     },
     { body: productSchema.partial() },
   )

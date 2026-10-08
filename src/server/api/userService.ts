@@ -39,9 +39,6 @@ export const userRouter = new Elysia({
 export const adminRouter = new Elysia({
   prefix: "/adminCreate",
 }).get("/", async () => {
-  // if (db.query.user.findFirst({ where: eq(user.email, "") }) === undefined) {
-  //   return "yes";
-  //}
   const adminEmail = String(process.env.MAIN_ADMIN_EMAIL).toLocaleLowerCase();
   const existingAdmin = await db.query.user.findFirst({
     where: eq(user.email, adminEmail),

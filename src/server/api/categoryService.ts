@@ -17,16 +17,20 @@ export const categoryRouter = new Elysia({
     "/",
     async ({ body }) => {
       await db.insert(categories).values(body);
+      await InvalidateCached(["categories"])
     },
     { body: categorySchema },
+    
   )
   .put(
     "/:id",
     async ({ params, body }) => {
       await db.update(categories).set(body).where(eq(categories.id, params.id));
+      await InvalidateCached(["categories"])
     },
     { body: categorySchema },
   )
   .delete("/:id", async ({ params }) => {
     await db.delete(categories).where(eq(categories.id, params.id));
+    await InvalidateCached(["categories"])
   });
