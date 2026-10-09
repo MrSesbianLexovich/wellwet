@@ -8,7 +8,6 @@ import { accordionRouter } from "./accordionService";
 import { categoryRouter } from "./categoryService";
 import { openapi } from "@elysiajs/openapi";
 import { z } from "zod";
-import { cors } from "@elysiajs/cors";
 
 const betterAuthView = (context: Context) => {
   const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
