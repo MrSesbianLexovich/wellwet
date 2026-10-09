@@ -15,13 +15,22 @@ export const questionSchema = z.object({
   question: z.string(),
 });
 
-export const productSchema = z.object({
+export const productDBSchema = z.object({
   image: z.file(),
   name: z.string(),
   shortDescription: z.string(),
   description: z.string(),
   type: z.string(),
 });
+
+export const productSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  shortDescription: z.string(),
+  description: z.string(),
+  type: z.string(),
+  image: z.string()
+})
 
 export const accordionSchema = z.object({
   title: z.string(),

@@ -18,6 +18,6 @@ import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { z } from "zod/v4";
 import { EllipsisVertical, Loader } from "lucide-react";
-import { productSchema } from "@/server/lib/schemas";
+import { productDBSchema } from "@/server/lib/schemas";
 
 export default

@@ -1,4 +1,4 @@
-import Elysia, { Context, status } from "elysia";
+import Elysia, { type Context, status } from "elysia";
 import { auth } from "../lib/auth";
 import { questionsRouter } from "./consultationService";
 import { productsRouter } from "./productService";
@@ -6,7 +6,9 @@ import { adminRouter, userRouter } from "./userService";
 import { fileRouter } from "./fileService";
 import { accordionRouter } from "./accordionService";
 import { categoryRouter } from "./categoryService";
-import { swagger } from "@elysiajs/swagger";
+import { openapi } from "@elysiajs/openapi";
+import { z } from "zod";
+import { cors } from "@elysiajs/cors";
 
 const betterAuthView = (context: Context) => {
   const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
@@ -21,6 +23,11 @@ const betterAuthView = (context: Context) => {
 export const app = new Elysia({
   prefix: "/api",
 })
+  .use(openapi({
+    mapJsonSchema: {
+        zod: z.toJSONSchema,
+      },
+  }))
   .all("/auth/*", betterAuthView)
   .use(questionsRouter)
   .use(productsRouter)
@@ -29,17 +36,5 @@ export const app = new Elysia({
   .use(accordionRouter)
   .use(categoryRouter)
   .use(adminRouter)
-  .use(
-    swagger({
-      documentation: {
-        info: {
-          title: 'My API',
-          version: '1.0.0',
-          description: 'API для приложения на Next.js',
-        },
-      },
-    }),
-  )
-
 
 export type App = typeof app;

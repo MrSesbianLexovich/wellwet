@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { queryClient } from "@/app/utils/query-client";
 import { useState } from "react";
-import { accordionSchema, productSchema } from "@/server/lib/schemas";
+import { accordionSchema, productDBSchema } from "@/server/lib/schemas";
 import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import CustomLoader from "@/components/loader";
-import Image from "next/image";
 
 export default function Admin() {
   const {
@@ -158,7 +157,7 @@ function CreateUpdateProduct({ product }: { product?: Product }) {
     },
   });
 
-  const formSchema = productSchema;
+  const formSchema = productDBSchema;
   const form = useForm({
     defaultValues: product as z.infer<typeof formSchema>,
     // defaultValues: {

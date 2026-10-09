@@ -24,7 +24,7 @@ import { useState } from "react";
 import {
   accordionSchema,
   categorySchema,
-  productSchema,
+  productDBSchema,
 } from "@/server/lib/schemas";
 import { Field, useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
